@@ -50,9 +50,13 @@ export async function loginUser(data: LoginInput) {
       status: 401,
     });
   }
-  const token = jwt.sign({ id: user.id, email: user.email }, ENV.JWT_SECRET, {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    ENV.JWT_SECRET,
+    {
+      expiresIn: "1h",
+    }
+  );
 
   return { token };
 }

@@ -6,7 +6,7 @@ export interface AuthRequest extends Request {
   user?: { id: string; email: string; role?: string };
 }
 
-export function authenticateToken(
+export function authenticate(
   req: AuthRequest,
   _res: Response,
   next: NextFunction

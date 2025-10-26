@@ -13,7 +13,11 @@ export async function registerUser(data: RegisterInput) {
   });
 
   if (existingUser) {
-    throw createError("User already exists", 400);
+    throw createError({
+      message: "User already exists",
+      code: "USER_EXISTS",
+      status: 400,
+    });
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -32,11 +36,19 @@ export async function loginUser(data: LoginInput) {
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    throw createError("Invalid email or password", 401);
+    throw createError({
+      message: "Invalid email or password",
+      code: "USER_NOT_FOUND",
+      status: 401,
+    });
   }
   const passwordValid = await bcrypt.compare(password, user.passwordHash);
   if (!passwordValid) {
-    throw createError("Invalid email or password", 401);
+    throw createError({
+      message: "Invalid email or password",
+      code: "INVALID_PASSWORD",
+      status: 401,
+    });
   }
   const token = jwt.sign({ id: user.id, email: user.email }, ENV.JWT_SECRET, {
     expiresIn: "1h",

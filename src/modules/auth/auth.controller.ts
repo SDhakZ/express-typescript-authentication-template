@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as AuthService from "./auth.service";
 import { RegisterSchema, LoginSchema } from "./auth.schemas";
-import { success } from "zod";
 
 export async function register(
   req: Request,

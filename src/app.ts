@@ -4,22 +4,30 @@ import cors from "cors";
 import { ENV } from "./config/env";
 import { errorHandler } from "./middleware/error.middleware";
 import authRoutes from "./modules/auth/auth.routes";
+import helmet from "helmet";
+var compression = require("compression");
+import morgan from "morgan";
 
 const app = express();
-
 // --- Global middleware ---
+app.use(helmet());
+app.use(compression());
 app.use(cors({ origin: ENV.CORS_ORIGIN }));
 app.use(express.json());
 
-// --- Health check route ---
-app.get("/", (_req, res) =>
-  res.json({ ok: true, message: "Server is running" })
+if (ENV.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+// --- api check route ---
+app.get("/api/v1", (_req, res) =>
+  res.json({ ok: true, message: "API is running" })
 );
 
 // --- Mount feature routes ---
 app.use("/api/v1/auth", authRoutes);
 
-// catch-all 404
+// --- catch all invalid routes ---
 app.use((_req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });
 });

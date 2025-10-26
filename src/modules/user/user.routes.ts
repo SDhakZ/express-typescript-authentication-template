@@ -12,4 +12,6 @@ router.get(
   authorize(["ADMIN"]),
   UserController.listAllUsers
 );
+router.patch("/profile", authenticate, UserController.updateProfile);
+
 export default router;

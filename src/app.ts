@@ -20,7 +20,7 @@ if (ENV.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// --- api check route ---
+// --- API check route ---
 app.get("/api/v1", (_req, res) =>
   res.json({ ok: true, message: "API is running" })
 );
@@ -29,7 +29,7 @@ app.get("/api/v1", (_req, res) =>
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
 
-// --- catch all invalid routes ---
+// --- Catch all invalid routes ---
 app.use((_req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });
 });

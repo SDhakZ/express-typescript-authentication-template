@@ -1,4 +1,7 @@
+// src/middleware/error.middleware.ts
 import { Request, Response, NextFunction } from "express";
+import { ZodError } from "zod";
+import { z } from "zod";
 
 interface AppErrorOptions {
   message: string;
@@ -6,12 +9,6 @@ interface AppErrorOptions {
   details?: unknown;
 }
 
-/**
- * Custom AppError class
- * ---------------------
- * Lets you throw meaningful errors from anywhere:
- *   throw new AppError("User not found", 404);
- */
 export class AppError extends Error {
   status: number;
   details?: unknown;
@@ -24,26 +21,38 @@ export class AppError extends Error {
   }
 }
 
-/**
- * Global Express error handler
- * ----------------------------
- * Must be the *last* middleware registered in app.ts
- */
 export function errorHandler(
   err: unknown,
   _req: Request,
   res: Response,
   _next: NextFunction
 ) {
-  // Handle known AppError
+  // Handle Zod validation errors cleanly
+  if (err instanceof ZodError) {
+    err = err.issues.map((e: any) => ({
+      field: e.path[0],
+      message: e.message,
+    }));
+    return res.status(400).json({
+      success: false,
+      message: "Validation failed",
+      details: err,
+    });
+  }
+
+  // Handle known AppError instances
   if (err instanceof AppError) {
     return res.status(err.status).json({
-      error: err.message,
+      success: false,
+      message: err.message,
       ...(err.details ? { details: err.details } : {}),
     });
   }
 
-  // Handle unexpected errors
+  // ❌ Handle unknown/unexpected errors
   console.error("💥 Unhandled error:", err);
-  return res.status(500).json({ error: "Internal Server Error" });
+  return res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
 }

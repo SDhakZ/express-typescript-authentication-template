@@ -16,14 +16,14 @@ export function authenticate(
     throw createError({ message: "Authorization header missing", status: 401 });
   }
 
-  const token = authHeader && authHeader.split(" ")[1];
+  const accessToken = authHeader && authHeader.split(" ")[1];
 
-  if (!token) {
-    throw createError({ message: "Token missing", status: 401 });
+  if (!accessToken) {
+    throw createError({ message: "accessToken missing", status: 401 });
   }
 
   try {
-    const decoded = jwt.verify(token, ENV.JWT_SECRET) as {
+    const decoded = jwt.verify(accessToken, ENV.JWT_SECRET) as {
       id: string;
       email: string;
       role?: string;
@@ -33,6 +33,9 @@ export function authenticate(
     req.user = { id: decoded.id, email: decoded.email, role: decoded.role };
     next();
   } catch (error) {
-    throw createError({ message: "Invalid or expired token", status: 401 });
+    throw createError({
+      message: "Invalid or expired Access Token",
+      status: 401,
+    });
   }
 }

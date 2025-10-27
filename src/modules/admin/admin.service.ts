@@ -51,9 +51,13 @@ export async function adminUpdateUser(
     },
   });
 
-  const roleChanged = data.role && data.role !== oldUser.role;
+  if (data.role && data.role !== oldUser.role) {
+    await prisma.refreshToken.deleteMany({
+      where: { userId: userId },
+    });
+  }
 
-  return { updatedUser, roleChanged };
+  return { updatedUser };
 }
 
 export async function getUserById(userId: number) {

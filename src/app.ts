@@ -9,14 +9,15 @@ import adminRoutes from "./modules/admin/admin.routes";
 import helmet from "helmet";
 var compression = require("compression");
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 
 const app = express();
 // --- Global middleware ---
 app.use(helmet());
 app.use(compression());
-app.use(cors({ origin: ENV.CORS_ORIGIN }));
+app.use(cors({ origin: ENV.CORS_ORIGIN, credentials: true }));
 app.use(express.json());
-
+app.use(cookieParser());
 if (ENV.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }

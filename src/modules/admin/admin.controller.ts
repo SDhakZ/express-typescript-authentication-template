@@ -2,7 +2,7 @@ import * as AdminService from "./admin.service";
 import { AuthRequest } from "../../middleware/authenticate.middleware";
 import { Response, NextFunction } from "express";
 import { AdminUpdateUserSchema } from "./admin.schema";
-import { generateToken } from "../auth/auth.service";
+import { generateAccessToken } from "../auth/auth.service";
 
 export async function listAllUsers(
   _req: AuthRequest,
@@ -35,19 +35,11 @@ export async function adminUpdateUser(
     }
     const userId = Number(req.params.id);
     const data = AdminUpdateUserSchema.parse(req.body);
-    const { updatedUser, roleChanged } = await AdminService.adminUpdateUser(
-      userId,
-      data
-    );
-    let newToken: string | undefined = undefined;
-    if (roleChanged) {
-      newToken = generateToken(updatedUser);
-    }
+    const { updatedUser } = await AdminService.adminUpdateUser(userId, data);
     return res.json({
       success: true,
       message: "User updated successfully",
       data: updatedUser,
-      ...(newToken ? { token: newToken } : {}),
     });
   } catch (error) {
     next(error);

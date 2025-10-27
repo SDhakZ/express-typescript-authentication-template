@@ -2,7 +2,6 @@ import * as UserService from "./user.service";
 import { AuthRequest } from "../../middleware/authenticate.middleware";
 import { Response, NextFunction } from "express";
 import { UpdateUserSchema } from "./user.schema";
-import { generateToken } from "../auth/auth.service";
 
 export async function getUserProfile(
   req: AuthRequest,

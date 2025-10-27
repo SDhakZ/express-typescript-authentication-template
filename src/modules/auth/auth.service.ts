@@ -51,22 +51,19 @@ export async function login(data: LoginInput) {
       status: 401,
     });
   }
-  const { token } = generateToken(user.id, user.email, user.role);
-
-  return { token };
+  return generateToken(user);
 }
 
-export function generateToken(userId: number, email: string, role?: Role) {
-  const token = jwt.sign(
+export function generateToken(user: { id: number; email: string; role: Role }) {
+  return jwt.sign(
     {
-      id: userId,
-      email: email,
-      role: role,
+      id: user.id,
+      email: user.email,
+      role: user.role,
     },
     ENV.JWT_SECRET,
     {
       expiresIn: "1h",
     }
   );
-  return { token };
 }

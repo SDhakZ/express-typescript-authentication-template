@@ -20,7 +20,9 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const data = LoginSchema.parse(req.body);
     const token = await AuthService.login(data);
-    res.status(200).json({ success: true, data: token });
+    res
+      .status(200)
+      .json({ success: true, data: { message: "Login successful" }, token });
   } catch (err) {
     next(err);
   }

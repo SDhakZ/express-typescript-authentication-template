@@ -13,5 +13,11 @@ router.get(
   UserController.listAllUsers
 );
 router.patch("/profile", authenticate, UserController.updateProfile);
+router.patch(
+  "/:id",
+  authenticate,
+  authorize(["ADMIN"]),
+  UserController.adminUpdateUser
+);
 
 export default router;

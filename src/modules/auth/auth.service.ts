@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { LoginInput, RegisterInput } from "./auth.schemas";
 import { ENV } from "../../config/env";
 import { createError } from "../../utils/errors";
+import { Role } from "@prisma/client";
 
 export async function register(data: RegisterInput) {
   const { name, email, password } = data;
@@ -50,13 +51,22 @@ export async function login(data: LoginInput) {
       status: 401,
     });
   }
+  const { token } = generateToken(user.id, user.email, user.role);
+
+  return { token };
+}
+
+export function generateToken(userId: number, email: string, role?: Role) {
   const token = jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
+    {
+      id: userId,
+      email: email,
+      role: role,
+    },
     ENV.JWT_SECRET,
     {
       expiresIn: "1h",
     }
   );
-
   return { token };
 }

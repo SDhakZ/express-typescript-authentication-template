@@ -13,7 +13,7 @@
     "seed": "npx prisma db seed"
   },
   "prisma": {
-    "seed": "node prisma/seeders/seed.js"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seeders/seed.ts"
   },
   "keywords": [],
   "author": "",

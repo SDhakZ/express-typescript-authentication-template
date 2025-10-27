@@ -5,7 +5,7 @@ import { LoginInput, RegisterInput } from "./auth.schemas";
 import { ENV } from "../../config/env";
 import { createError } from "../../utils/errors";
 
-export async function registerUser(data: RegisterInput) {
+export async function register(data: RegisterInput) {
   const { name, email, password } = data;
 
   const existingUser = await prisma.user.findUnique({
@@ -31,7 +31,7 @@ export async function registerUser(data: RegisterInput) {
   });
   return { id: user.id, email: user.email, name: user.name };
 }
-export async function loginUser(data: LoginInput) {
+export async function login(data: LoginInput) {
   const { email, password } = data;
 
   const user = await prisma.user.findUnique({ where: { email } });

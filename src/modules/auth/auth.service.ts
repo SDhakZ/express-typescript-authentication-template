@@ -35,15 +35,24 @@ export async function register(data: RegisterInput) {
 export async function login(data: LoginInput) {
   const { email, password } = data;
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
+  const userRecord = await prisma.user.findUnique({
+    where: { email },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      passwordHash: true,
+    },
+  });
+  if (!userRecord) {
     throw createError({
       message: "Invalid email or password",
       code: "USER_NOT_FOUND",
       status: 401,
     });
   }
-  const passwordValid = await bcrypt.compare(password, user.passwordHash);
+  const passwordValid = await bcrypt.compare(password, userRecord.passwordHash);
   if (!passwordValid) {
     throw createError({
       message: "Invalid email or password",
@@ -51,7 +60,9 @@ export async function login(data: LoginInput) {
       status: 401,
     });
   }
-  return generateToken(user);
+  const { passwordHash, ...safeUser } = userRecord;
+  const token = generateToken(userRecord);
+  return { user: safeUser, token };
 }
 
 export function generateToken(user: { id: number; email: string; role: Role }) {

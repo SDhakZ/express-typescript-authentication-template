@@ -10,7 +10,13 @@ export async function register(
   try {
     const data = RegisterSchema.parse(req.body);
     const user = await AuthService.register(data);
-    res.status(201).json({ success: true, data: user });
+    res
+      .status(201)
+      .json({
+        success: true,
+        message: "User registered successfully",
+        data: user,
+      });
   } catch (err) {
     next(err);
   }
@@ -19,10 +25,13 @@ export async function register(
 export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const data = LoginSchema.parse(req.body);
-    const token = await AuthService.login(data);
-    res
-      .status(200)
-      .json({ success: true, data: { message: "Login successful" }, token });
+    const { user, token } = await AuthService.login(data);
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      data: { user },
+      token,
+    });
   } catch (err) {
     next(err);
   }

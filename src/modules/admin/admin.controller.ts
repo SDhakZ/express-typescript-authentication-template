@@ -46,6 +46,33 @@ export async function adminUpdateUser(
   }
 }
 
+export async function adminDeleteUser(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    const userIdToDelete = Number(req.params.id);
+    const adminId = Number(req.user.id);
+    if (userIdToDelete === adminId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Admin cannot delete self" });
+    }
+
+    const message = await AdminService.adminDeleteUser(userIdToDelete);
+    return res.json({
+      success: true,
+      message: message,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getUserById(
   req: AuthRequest,
   res: Response,

@@ -23,5 +23,11 @@ router.patch(
   authorize(["ADMIN"]),
   AdminController.adminUpdateUser
 );
+router.delete(
+  "/users/:id",
+  authenticate,
+  authorize(["ADMIN"]),
+  AdminController.adminDeleteUser
+);
 
 export default router;

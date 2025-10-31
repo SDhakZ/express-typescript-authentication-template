@@ -60,6 +60,24 @@ export async function adminUpdateUser(
   return { updatedUser };
 }
 
+export async function adminDeleteUser(userIdToDelete: number) {
+  const user = await prisma.user.findUnique({
+    where: { id: userIdToDelete },
+  });
+  if (!user) {
+    throw createError({
+      message: "User not found",
+      status: 404,
+      code: "USER_NOT_FOUND",
+    });
+  }
+
+  await prisma.user.delete({
+    where: { id: userIdToDelete },
+  });
+  return "User deleted successfully";
+}
+
 export async function getUserById(userId: number) {
   console.log("getUserById called with:", userId);
 

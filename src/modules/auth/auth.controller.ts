@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as AuthService from "./auth.service";
 import { RegisterSchema, LoginSchema } from "./auth.schemas";
+import * as TokenService from "./token.service";
 import {
   AUTH_COOKIE_OPTIONS,
   CLEAR_AUTH_COOKIE_OPTIONS,
@@ -45,7 +46,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function refreshToken(
+export async function validateRefreshToken(
   req: Request,
   res: Response,
   next: NextFunction
@@ -59,9 +60,8 @@ export async function refreshToken(
       });
     }
 
-    const { accessToken, refreshToken } = await AuthService.refreshToken(
-      oldToken
-    );
+    const { accessToken, refreshToken } =
+      await TokenService.validateRefreshToken(oldToken);
 
     res.cookie("refreshToken", refreshToken, AUTH_COOKIE_OPTIONS);
 

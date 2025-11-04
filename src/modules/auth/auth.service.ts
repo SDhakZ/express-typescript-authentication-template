@@ -1,11 +1,8 @@
 import prisma from "../../config/prisma";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import * as crypto from "crypto";
+import { hashPassword, comparePasswords } from "./auth.utils";
 import { LoginInput, RegisterInput } from "./auth.schemas";
-import { ENV } from "../../config/env";
 import { createError } from "../../utils/errors";
-import { Role } from "@prisma/client";
+import { generateAccessToken, generateRefreshToken } from "./token.service";
 
 export async function register(data: RegisterInput) {
   const { name, email, password } = data;
@@ -22,7 +19,7 @@ export async function register(data: RegisterInput) {
     });
   }
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await hashPassword(password);
 
   const user = await prisma.user.create({
     data: {
@@ -53,7 +50,10 @@ export async function login(data: LoginInput) {
       status: 401,
     });
   }
-  const passwordValid = await bcrypt.compare(password, userRecord.passwordHash);
+  const passwordValid = await comparePasswords(
+    password,
+    userRecord.passwordHash
+  );
   if (!passwordValid) {
     throw createError({
       message: "Invalid email or password",
@@ -68,71 +68,8 @@ export async function login(data: LoginInput) {
   return { user: safeUser, accessToken, refreshToken };
 }
 
-export async function refreshToken(oldToken: string) {
-  const storedToken = await prisma.refreshToken.findUnique({
-    where: { token: oldToken },
-    select: {
-      userId: true,
-      expiresAt: true,
-    },
-  });
-
-  if (!storedToken || storedToken.expiresAt < new Date()) {
-    throw createError({
-      message: "Invalid or expired refresh token",
-      code: "INVALID_TOKEN",
-      status: 401,
-    });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: storedToken.userId },
-  });
-
-  if (!user) {
-    throw createError({
-      message: "User not found",
-      code: "USER_NOT_FOUND",
-      status: 404,
-    });
-  }
-
-  const newAccessToken = generateAccessToken(user);
-  const newRefreshToken = await generateRefreshToken(user.id);
-
-  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
-}
-
 export async function logout(refreshToken: string) {
   await prisma.refreshToken.deleteMany({
     where: { token: refreshToken },
   });
-}
-
-export function generateAccessToken(user: {
-  id: number;
-  email: string;
-  role: Role;
-}) {
-  return jwt.sign(
-    {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    },
-    ENV.JWT_SECRET,
-    {
-      expiresIn: "1h",
-    }
-  );
-}
-export async function generateRefreshToken(userId: number, days: number = 7) {
-  const token = crypto.randomBytes(40).toString("hex");
-  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
-
-  await prisma.refreshToken.create({
-    data: { token, userId, expiresAt },
-  });
-
-  return token;
 }

@@ -34,7 +34,7 @@ export async function register(data: RegisterInput) {
   return { id: user.id, email: user.email, name: user.name };
 }
 export async function login(data: LoginInput) {
-  const { email, password } = data;
+  const { email, password, rememberMe } = data;
 
   const userRecord = await prisma.user.findUnique({
     where: { email },
@@ -61,9 +61,10 @@ export async function login(data: LoginInput) {
       status: 401,
     });
   }
+  const days = rememberMe ? 30 : 7;
   const { passwordHash, ...safeUser } = userRecord;
   const accessToken = generateAccessToken(userRecord);
-  const refreshToken = await generateRefreshToken(userRecord.id);
+  const refreshToken = await generateRefreshToken(userRecord.id, days);
   return { user: safeUser, accessToken, refreshToken };
 }
 
@@ -125,9 +126,9 @@ export function generateAccessToken(user: {
     }
   );
 }
-export async function generateRefreshToken(userId: number) {
+export async function generateRefreshToken(userId: number, days: number = 7) {
   const token = crypto.randomBytes(40).toString("hex");
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
   await prisma.refreshToken.create({
     data: { token, userId, expiresAt },

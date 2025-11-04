@@ -27,9 +27,13 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   try {
     const data = LoginSchema.parse(req.body);
     const { user, accessToken, refreshToken } = await AuthService.login(data);
-
-    res.cookie("refreshToken", refreshToken, AUTH_COOKIE_OPTIONS);
-
+    const cookieOptions = {
+      ...AUTH_COOKIE_OPTIONS,
+      maxAge: data.rememberMe
+        ? 30 * 24 * 60 * 60 * 1000
+        : 7 * 24 * 60 * 60 * 1000,
+    };
+    res.cookie("refreshToken", refreshToken, cookieOptions);
     res.status(200).json({
       success: true,
       message: "Login successful",

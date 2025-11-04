@@ -19,7 +19,7 @@ export function authenticate(
   const accessToken = authHeader && authHeader.split(" ")[1];
 
   if (!accessToken) {
-    throw createError({ message: "accessToken missing", status: 401 });
+    throw createError({ message: "Access Token missing", status: 401 });
   }
 
   try {

@@ -1,5 +1,4 @@
 import bcrypt, { compare } from "bcrypt";
-import crypto from "crypto";
 
 export function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);

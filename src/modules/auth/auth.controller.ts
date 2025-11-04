@@ -52,8 +52,6 @@ export async function refreshToken(
 ) {
   try {
     const oldToken = req.cookies.refreshToken;
-    console.log("oldToken:", oldToken);
-    console.log("Old Refresh Token:", oldToken);
     if (!oldToken) {
       return res.status(400).json({
         success: false,

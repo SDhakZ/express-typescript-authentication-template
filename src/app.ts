@@ -34,7 +34,7 @@ app.use("/api/v1/admin", adminRoutes);
 
 // --- Catch all invalid routes ---
 app.use((_req, res) => {
-  res.status(404).json({ success: false, message: "Route not found" });
+  res.status(404).json({ message: "Route not found" });
 });
 
 // --- Global error handler ---

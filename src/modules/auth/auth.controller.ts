@@ -15,9 +15,8 @@ export async function register(
     const data = RegisterSchema.parse(req.body);
     const user = await AuthService.register(data);
     res.status(201).json({
-      success: true,
       message: "User registered successfully",
-      data: user,
+      data: { user },
     });
   } catch (err) {
     next(err);
@@ -36,7 +35,6 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     };
     res.cookie("refreshToken", refreshToken, cookieOptions);
     res.status(200).json({
-      success: true,
       message: "Login successful",
       data: { user },
       accessToken,
@@ -55,7 +53,6 @@ export async function validateRefreshToken(
     const oldToken = req.cookies.refreshToken;
     if (!oldToken) {
       return res.status(400).json({
-        success: false,
         message: "Refresh token not provided",
       });
     }
@@ -66,7 +63,6 @@ export async function validateRefreshToken(
     res.cookie("refreshToken", refreshToken, AUTH_COOKIE_OPTIONS);
 
     res.status(200).json({
-      success: true,
       message: "Token refreshed successfully",
       accessToken,
     });
@@ -80,7 +76,6 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
       return res.status(400).json({
-        success: false,
         message: "Refresh token not provided",
       });
     }
@@ -89,7 +84,6 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
 
     res.clearCookie("refreshToken", CLEAR_AUTH_COOKIE_OPTIONS);
     res.status(200).json({
-      success: true,
       message: "Logged out successfully",
     });
   } catch (err) {

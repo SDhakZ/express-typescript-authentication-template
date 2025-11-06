@@ -17,7 +17,6 @@ export async function listAllUsers() {
     throw createError({
       message: "No users found",
       status: 404,
-      code: "USERS_NOT_FOUND",
     });
   }
   return users;
@@ -34,7 +33,6 @@ export async function adminUpdateUser(
     throw createError({
       message: "User not found",
       status: 404,
-      code: "USER_NOT_FOUND",
     });
   }
 
@@ -68,7 +66,6 @@ export async function adminDeleteUser(userIdToDelete: number) {
     throw createError({
       message: "User not found",
       status: 404,
-      code: "USER_NOT_FOUND",
     });
   }
 
@@ -95,7 +92,6 @@ export async function getUserById(userId: number) {
     throw createError({
       message: "User not found",
       status: 404,
-      code: "USER_NOT_FOUND",
     });
   }
   return user;

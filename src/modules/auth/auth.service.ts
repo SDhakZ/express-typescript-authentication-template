@@ -14,7 +14,6 @@ export async function register(data: RegisterInput) {
   if (existingUser) {
     throw createError({
       message: "User already exists",
-      code: "USER_EXISTS",
       status: 400,
     });
   }
@@ -46,7 +45,6 @@ export async function login(data: LoginInput) {
   if (!userRecord) {
     throw createError({
       message: "Invalid email or password",
-      code: "USER_NOT_FOUND",
       status: 401,
     });
   }
@@ -57,7 +55,6 @@ export async function login(data: LoginInput) {
   if (!passwordValid) {
     throw createError({
       message: "Invalid email or password",
-      code: "INVALID_PASSWORD",
       status: 401,
     });
   }

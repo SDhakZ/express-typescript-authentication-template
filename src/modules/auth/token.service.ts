@@ -45,7 +45,6 @@ export async function validateRefreshToken(oldToken: string) {
   if (!storedToken || storedToken.expiresAt < new Date()) {
     throw createError({
       message: "Invalid or expired refresh token",
-      code: "INVALID_TOKEN",
       status: 401,
     });
   }
@@ -57,7 +56,6 @@ export async function validateRefreshToken(oldToken: string) {
   if (!user) {
     throw createError({
       message: "User not found",
-      code: "USER_NOT_FOUND",
       status: 404,
     });
   }

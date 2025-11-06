@@ -2,7 +2,6 @@ import * as AdminService from "./admin.service";
 import { AuthRequest } from "../../middleware/authenticate.middleware";
 import { Response, NextFunction } from "express";
 import { AdminUpdateUserSchema } from "./admin.schema";
-import { generateAccessToken } from "../auth/auth.service";
 
 export async function listAllUsers(
   _req: AuthRequest,
@@ -11,11 +10,10 @@ export async function listAllUsers(
 ) {
   try {
     if (!_req.user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const users = await AdminService.listAllUsers();
     return res.json({
-      success: true,
       message: "All users retrieved successfully",
       data: users,
     });
@@ -31,13 +29,12 @@ export async function adminUpdateUser(
 ) {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const userId = Number(req.params.id);
     const data = AdminUpdateUserSchema.parse(req.body);
     const { updatedUser } = await AdminService.adminUpdateUser(userId, data);
     return res.json({
-      success: true,
       message: "User updated successfully",
       data: updatedUser,
     });
@@ -53,19 +50,16 @@ export async function adminDeleteUser(
 ) {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const userIdToDelete = Number(req.params.id);
     const adminId = Number(req.user.id);
     if (userIdToDelete === adminId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Admin cannot delete self" });
+      return res.status(400).json({ message: "Admin cannot delete self" });
     }
 
     const message = await AdminService.adminDeleteUser(userIdToDelete);
     return res.json({
-      success: true,
       message: message,
     });
   } catch (error) {
@@ -80,12 +74,11 @@ export async function getUserById(
 ) {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const userId = Number(req.params.id);
     const user = await AdminService.getUserById(userId);
     return res.json({
-      success: true,
       message: "User retrieved successfully",
       data: user,
     });

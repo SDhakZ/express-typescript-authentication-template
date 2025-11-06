@@ -17,7 +17,6 @@ export async function getUserProfile(userId: number) {
     throw createError({
       message: "User not found",
       status: 404,
-      code: "USER_NOT_FOUND",
     });
   }
   return user;
@@ -40,7 +39,6 @@ export async function updateProfile(userId: number, data: UpdateUserInput) {
     throw createError({
       message: "User not found",
       status: 404,
-      code: "USER_NOT_FOUND",
     });
   }
   return user;

@@ -10,12 +10,11 @@ export async function getUserProfile(
 ) {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const userId = Number(req.user.id);
     const user = await UserService.getUserProfile(userId);
     return res.json({
-      success: true,
       message: "User profile retrieved successfully",
       data: user,
     });
@@ -31,13 +30,12 @@ export async function updateProfile(
 ) {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const userId = Number(req.user.id);
     const data = UpdateUserSchema.parse(req.body);
     const user = await UserService.updateProfile(userId, data);
     return res.json({
-      success: true,
       message: "Profile updated successfully",
       data: user,
     });

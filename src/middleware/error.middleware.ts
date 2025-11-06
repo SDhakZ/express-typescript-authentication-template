@@ -16,7 +16,6 @@ export function errorHandler(
     }));
 
     return res.status(400).json({
-      success: false,
       message: "Validation failed",
       details,
     });
@@ -25,7 +24,6 @@ export function errorHandler(
   // Custom functional errors
   if (err.isCustom) {
     return res.status(err.status || 500).json({
-      success: false,
       message: err.message,
       ...(err.details ? { details: err.details } : {}),
       ...(err.code ? { code: err.code } : {}),
@@ -36,7 +34,6 @@ export function errorHandler(
   // Fallback for unexpected errors
   console.error("💥 Unhandled error:", err);
   return res.status(500).json({
-    success: false,
     message: "Internal Server Error",
   });
 }

@@ -16,7 +16,7 @@ export async function getUserProfile(
     const user = await UserService.getUserProfile(userId);
     return res.json({
       message: "User profile retrieved successfully",
-      data: user,
+      data: { user },
     });
   } catch (error) {
     next(error);

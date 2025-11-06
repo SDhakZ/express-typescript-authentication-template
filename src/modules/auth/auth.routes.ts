@@ -5,6 +5,6 @@ import { loginlimiter, registerlimiter } from "../../middleware/ratelimiters";
 const router = Router();
 router.post("/register", registerlimiter, AuthController.register);
 router.post("/login", loginlimiter, AuthController.login);
-router.post("/refresh-token", AuthController.validateRefreshToken);
+router.post("/refresh", AuthController.validateRefreshToken);
 router.post("/logout", AuthController.logout);
 export default router;

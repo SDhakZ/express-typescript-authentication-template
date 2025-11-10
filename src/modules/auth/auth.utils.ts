@@ -1,7 +1,7 @@
 import bcrypt, { compare } from "bcrypt";
-
+import { ENV } from "../../config/env";
 export function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10);
+  return bcrypt.hash(password, Number(ENV.SALT_ROUNDS));
 }
 
 export function comparePasswords(

@@ -6,6 +6,7 @@ import { errorHandler } from "./middleware/error.middleware";
 import authRoutes from "./modules/auth/auth.routes";
 import userRoutes from "./modules/user/user.routes";
 import adminRoutes from "./modules/admin/admin.routes";
+import profileRoutes from "./modules/profile/profile.routes";
 import helmet from "helmet";
 var compression = require("compression");
 import morgan from "morgan";
@@ -31,6 +32,7 @@ app.get("/api/v1", (_req, res) =>
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/profile", profileRoutes);
 
 // --- Catch all invalid routes ---
 app.use((_req, res) => {

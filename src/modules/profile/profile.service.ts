@@ -65,7 +65,7 @@ export async function changePassword(
   const isValid = await comparePasswords(currentPassword, user.passwordHash);
   if (!isValid) {
     throw createError({
-      message: "You have entered invalid password",
+      message: "You have entered invalid current password",
       status: 400,
     });
   }

@@ -10,6 +10,7 @@ import helmet from "helmet";
 var compression = require("compression");
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import passport from "./modules/auth/auth.passport";
 
 const app = express();
 // --- Global middleware ---
@@ -18,6 +19,8 @@ app.use(compression());
 app.use(cors({ origin: ENV.CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+// Passport initialization (for OAuth providers)
+app.use(passport.initialize());
 if (ENV.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }

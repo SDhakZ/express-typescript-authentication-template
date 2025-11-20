@@ -14,8 +14,9 @@ enum Role {
 
 model User {
   id           Int            @id @default(autoincrement())
+  googleId     String?        @unique
   email        String         @unique
-  passwordHash String
+  passwordHash String?
   name         String?
   role         Role           @default(USER)
   createdAt    DateTime       @default(now())

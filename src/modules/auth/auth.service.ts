@@ -48,6 +48,13 @@ export async function login(data: LoginInput) {
       status: 401,
     });
   }
+  if (!userRecord.passwordHash) {
+    throw createError({
+      message:
+        "This account was created with Google. Please continue with Google Login.",
+      status: 400,
+    });
+  }
   const passwordValid = await comparePasswords(
     password,
     userRecord.passwordHash

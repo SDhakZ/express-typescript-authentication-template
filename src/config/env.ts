@@ -10,6 +10,10 @@ const EnvSchema = z.object({
     .string()
     .min(32, "JWT_SECRET must be at least 32 characters long"),
   SALT_ROUNDS: z.string().default("10"),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_CALLBACK_PATH: z.string().optional(),
+  BACKEND_URL: z.string().default("http://localhost:4000"),
 });
 
 const parsed = EnvSchema.safeParse(process.env);

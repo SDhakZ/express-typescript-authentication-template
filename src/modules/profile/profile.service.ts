@@ -11,17 +11,23 @@ export async function getUserProfile(userId: number) {
       name: true,
       email: true,
       role: true,
+      passwordHash: true,
       createdAt: true,
       updatedAt: true,
     },
   });
+
   if (!user) {
     throw createError({
       message: "User not found",
       status: 404,
     });
   }
-  return user;
+
+  const hasPassword = user.passwordHash !== null;
+
+  const { passwordHash, ...userWithoutPassword } = user;
+  return { ...userWithoutPassword, hasPassword };
 }
 
 export async function updateProfile(userId: number, data: UpdateUserInput) {
@@ -61,7 +67,14 @@ export async function changePassword(
     throw createError({ message: "No user found", status: 404 });
   }
 
-  // Verify current password
+  if (!user.passwordHash) {
+    throw createError({
+      message:
+        "This account was created with Google. Password change not allowed.",
+      status: 400,
+    });
+  }
+
   const isValid = await comparePasswords(currentPassword, user.passwordHash);
   if (!isValid) {
     throw createError({

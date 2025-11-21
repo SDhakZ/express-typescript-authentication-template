@@ -1,6 +1,6 @@
 import prisma from "../../config/prisma";
 import { createError } from "../../utils/errors";
-import type { ChangePasswordInput } from "./profile.schema";
+import type { AddPasswordInput, ChangePasswordInput } from "./profile.schema";
 import { hashPassword, comparePasswords } from "../auth/auth.utils";
 import { UpdateUserInput } from "./profile.schema";
 export async function getUserProfile(userId: number) {
@@ -98,4 +98,32 @@ export async function changePassword(
   });
 
   return "Password changed successfully";
+}
+
+export async function addPassword(userId: number, data: AddPasswordInput) {
+  const { addPassword: newPassword } = data;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, passwordHash: true },
+  });
+
+  if (!user) {
+    throw createError({ message: "No user found", status: 404 });
+  }
+
+  if (user.passwordHash) {
+    throw createError({
+      message: "Password already exists for this account",
+      status: 400,
+    });
+  }
+
+  const newHashedPassword = await hashPassword(newPassword);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash: newHashedPassword },
+  });
+
+  return "Password added successfully";
 }

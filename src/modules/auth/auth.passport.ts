@@ -33,7 +33,6 @@ if (ENV.GOOGLE_CLIENT_ID && ENV.GOOGLE_CLIENT_SECRET) {
             where: { email },
             update: {
               googleId: profile.id,
-              name: profile.displayName || undefined,
             },
             create: {
               email,

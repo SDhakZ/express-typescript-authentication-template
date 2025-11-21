@@ -11,6 +11,12 @@ export const ChangePasswordSchema = z.object({
 
 export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>;
 
+export const AddPasswordSchema = z.object({
+  addPassword: z.string().min(6, "Password must be at least 6 characters long"),
+});
+
+export type AddPasswordInput = z.infer<typeof AddPasswordSchema>;
+
 export const UpdateUserSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long").optional(),
   email: z.email().optional(),
